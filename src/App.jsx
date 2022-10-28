@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Client from "shopify-buy";
 
+//ACCESSING SHOPIFY
+const SHOPIFY_KEY = process.env.REACT_APP_SHOPIFY_KEY;
+
 //establish the client
 const client = Client.buildClient({
     domain: 'xylk.myshopify.com',
-    storefrontAccessToken: '745e3927ecd9dc159a10c086fbd07540'
+    storefrontAccessToken: SHOPIFY_KEY
 });
 
 const App = () => {
