@@ -6,13 +6,14 @@
         //https://paulie.dev/posts/2020/08/react-hooks-and-matter-js/
         //https://codesandbox.io/s/76c81?file=/src/Scene.js:230-434
 
-import React, { useEffect, useRef}  from "react";
+import React, { useEffect, useRef, useState }  from "react";
 import Matter from "matter-js";
-import { red } from "@mui/material/colors";
+import Products from "./Product";
 
 
 
-const Scene = () => {
+
+const Scene = ({productData, imgArr}) => {
 
     //Dimensions use for engine
     const matterWidth = window.innerWidth, matterHeight = window.innerHeight;
@@ -20,6 +21,9 @@ const Scene = () => {
     //Creating background
     const scene = useRef(null);
 
+
+    //console.log(imgArr);
+    //console.log(productData);
 
     useEffect(() => {
         
@@ -30,6 +34,7 @@ const Scene = () => {
         let World = Matter.World;
         let Body = Matter.Body;
         let Bodies = Matter.Bodies;
+        let Composite = Matter.Composite;
         let Events = Matter.Events;//module contains methods to fire and listen to events on other objects.
 
         //CREATE 'ENGINE' (physics engine)
@@ -57,8 +62,13 @@ const Scene = () => {
 
         //CREATING BODIES
 
+
+
+
+        console.log(imgArr);
+
         //The 'ball'
-        let ball1 = Bodies.rectangle( 10, 10, 0, {
+        let ball1 = Bodies.rectangle( 10, 10, 100, 100, {
             label: "ball",
             restitution: 1, //bounciness
             friction: 0,
@@ -66,9 +76,17 @@ const Scene = () => {
             density: 0.1, //degree of consistency measured by the quantity of mass per unit volume.
             inertia: Infinity,
             render: {
-                fillStyle: "#1F51FF"
+                fillStyle: "blue",
+                sprite: {
+                    texture: imgArr[1].src,
+                    xScale: 0.2,
+                    yScale: 0.2,
+                }
+
             }
         });
+
+        //console.log(ball1);
 
             //The 'ball'
             let ball2 = Bodies.circle( 10, 10, 10, {
@@ -79,19 +97,8 @@ const Scene = () => {
                 density: 0.1, //degree of consistency measured by the quantity of mass per unit volume.
                 inertia: Infinity,
                 render: {
-                    fillStyle: "#1F51FF"
-                }
-            });
-
-            let square = Bodies.rectangle(10, 10, 20, 20, { 
-                label: "square",
-                restitution: 1, //bounciness
-                friction: 0,
-                frictionAir: 0,
-                density: 0.1, //degree of consistency measured by the quantity of mass per unit volume.
-                inertia: Infinity,
-                render: {
-                    fillStyle: "#1F51FF"
+                    fillStyle: "#transparent",
+   
                 }
             });
 
@@ -142,13 +149,12 @@ const Scene = () => {
 
         //Adding the ball
         World.add(engine.world, [ball1]);
-        World.add(engine.world, [ball2]);
-        World.add(engine.world, [square]);
 
+/*
 
         // function following the collisionStart ev
         const handleCollision = (e) => {
-            if(this.props.active) {
+
                 const {pairs} = e;
                 // loop through the pairs array(s) and update the score if a collision is detected between a ball and a pocket
                 pairs.forEach((pair) => {
@@ -156,25 +162,28 @@ const Scene = () => {
                     // String.includes allows to find if the label contains a certain string of text
                     if(bodyA.label.includes("ball", "square") && bodyB.label === "wall_bottom") {
                         this.prop.action();
+                        console.log(this.prop.action())
                     }
                 });
-              }
+              
             };
-
-            Body.applyForce(ball1, { x: 0.1, y: 0.1 }, { x: 0.11, y: 0.11 });
+*/
+            Body.applyForce(ball1, { x: 0.1, y: 0.1 }, { x: 3.0, y: 3.0 });
             Body.applyForce(ball2, { x: 0.1, y: 0.1 }, { x: 0.11, y: 0.11 });
-            Body.applyForce(square, { x: 0.1, y: 0.1 }, { x: 0.11, y: 0.11 });
 
 
 
-            Events.on(engine, "collisionStart", handleCollision);
+         //  Events.on(engine, "collisionStart", handleCollision);
             Runner.run(engine); 
             Render.run(render);
         }, []);
 
         return (
             <>
-                <div id = "matter-container" ref = {scene} style = {{width: "100vw", height: "100vh"}}></div>
+            
+                <div id = "matter-container" ref = {scene} style = {{width: "100vw", height: "100vh"}}>
+                </div>
+                
             </>
         )
     }
