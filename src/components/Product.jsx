@@ -1,38 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Scene from "./Scene";
+import Matter from "matter-js";
+import "../styles/Product.css"       
 
 
-
-
-    /*
-let productObj;
-
-//this is your new "modal" rendering function
-const renderData = (product) => {
-    //console.log(product)
-
-
-    productObj = {
-        "id": product.id,
-        "title": product.title,
-        "description": product.description,
-        "images": product.images, 
-    }
-
-    return (
-
-        <div>
-            {productObj["id"]}
-            {productObj["title"]}
-            {productObj["description"]}
-            {productObj["images"]}
-
-        </div>
-    )
-}
-*/
-
-const Products = (productData) => {
+const Products = ({productData}) => {
 
     
 
@@ -42,27 +14,22 @@ const Products = (productData) => {
     }
 
     
-
     return (
-        <div>
-            {/* 
-            {productData.map((product, i) => {
-                return (
-                    <div   key={product.id}>
-                        <img className="image-send"                         
-                            data-url={product.onlineStoreUrl}
-                            src={product.images[0].src}
-                            style={{ width: "10%" }}
-                            onClick={(e) => openProductWindow(e)}
-                        />
-                    </div>
-                )
-            })}
-            */}
-           
-        </div>
-  
-
+        
+            <div>
+                {productData.map((product, i) => {
+                    return (
+                        <div className="bags"  key={product.id}>
+                            <img className="image-send"                         
+                                data-url={product.onlineStoreUrl}
+                                src={product.images[0].src}
+                                style={{ width: "20%" }}
+                                onClick={(e) => openProductWindow(e)}
+                            />
+                        </div>
+                    )
+                })}
+            </div>
     )
 
 
