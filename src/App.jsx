@@ -24,6 +24,8 @@ const App = ({client}) => {
 
                 <Scene productData={productData}/>
                 
+                
+
             </div>
     )
 }

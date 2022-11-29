@@ -18,5 +18,6 @@ const client = Client.buildClient({
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
+  
   <App client={client}/>
 )
