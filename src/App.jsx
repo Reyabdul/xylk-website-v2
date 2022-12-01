@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Products from './components/Product';
 import Scene from './components/Scene';
-import "./styles/App.css";
+import "./styles/app.css";
 
 
 const App = ({client}) => {
