@@ -16,3 +16,18 @@ body {
 .product-images img {
   width: 200px;
 }
+
+.stop-button {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  width: 200px;
+}
+
+
+#stop-button {
+  position: absolute;
+  top: 5rem;
+  left: 50%;
+  width: 200px;
+}
