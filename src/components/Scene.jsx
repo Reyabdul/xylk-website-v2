@@ -10,7 +10,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import Matter, { Engine, Render, Runner, World, Body, Bodies, Common, Composite, Events, Mouse, MouseConstraint, Query, Sleeping } from "matter-js";
 import Products from "./Product";
 
-
 const Scene = ({ productData }) => {
 
 
@@ -22,8 +21,6 @@ const Scene = ({ productData }) => {
     //for Button that stops the bags that movie
     //console.log(active);
     const [buttonText, setButtonText] = useState("stop");
-    const [active, setActive] = useState(false);
-
 
     //Dimensions use for engine
     const VIEW = {};
@@ -34,7 +31,7 @@ const Scene = ({ productData }) => {
     VIEW.offsetX  = VIEW.width / 2;
     VIEW.offsetY  = VIEW.height / 2;
 
-    const matterWidth = window.innerWidth, matterHeight = window.innerHeight;
+    const matterWidth = window.innerWidth, matterHeight = window.innerHeight - 70;
 
     //Canvas
     const boxRef = useRef(null);
@@ -51,9 +48,7 @@ const Scene = ({ productData }) => {
                 y: 0,
                 scale: 0.01 //The gravity scale factor
             }
-        }),
-            world = engine.world;
-        ;
+        }), world = engine.world;
 
         //CREATE A 'RENDERER'
         const render = Render.create({
@@ -63,7 +58,7 @@ const Scene = ({ productData }) => {
             options: {
                 width: matterWidth,
                 height: matterHeight,
-                background: "#FFF",
+                background: "transparent",
                 wireframes: false,
             }
         });
@@ -76,10 +71,8 @@ const Scene = ({ productData }) => {
         //body and bodies were declared on the top
         bodiesDom = document.getElementsByClassName('bags');
 
-
         for (var i = 0; i < bodiesDom.length; i++) {
             if (bodiesDom[i]) {
-
                 body = Bodies.circle( VIEW.centerX + Math.floor(Math.random() * VIEW.width/2) - VIEW.width/4, VIEW.centerY + Math.floor(Math.random() * VIEW.height/2) - VIEW.height/4, 30, {
                     label: "ball",
                     restitution: 1, //bounciness,
@@ -100,17 +93,15 @@ const Scene = ({ productData }) => {
                 })
             }
               //Applying the force to move the ball
-            Body.applyForce(body, { x: 0.1, y: 0.1 }, { x: 0.66, y: -0.66 });
+            Body.applyForce(body, 
+                { x: 100, y: 100 }, 
+                { x: Math.random() * 1.2, y: -Math.random() * 1.2 }
+            );
             bodies.push(body);
-            //isActive.push(bodies[i].isStatic);
+            console.log(bodies[i]);
         }
 
-        //console.log(bodies);
-        //console.log(body);
-
-        //console.log(productData[0].onlineStoreUrl)
-
-        //The 'walls'
+        //Wall options'
         const WALLWIDTH = 20;
 
         const wallOptions = {
@@ -118,35 +109,30 @@ const Scene = ({ productData }) => {
             isStatic: true,
             density: 1,
             render: {
-                fillStyle: "orange"
+                fillStyle: "transparent"
 
             }
         }
-
 
         //ADDING ALL THE BODIES INTO THE WORLD
 
         //Adding Walls
         World.add(engine.world, [
-
             //top
             Bodies.rectangle(0, 0, matterWidth * 2, WALLWIDTH, {
                 ...wallOptions,
                 label: "wall_top"
             }),
-
             //Bottom
             Bodies.rectangle(0, matterHeight, matterWidth * 2, WALLWIDTH, {
                 ...wallOptions,
                 label: "wall_bottom"
             }),
-
             // Left
             Bodies.rectangle(0, matterHeight, WALLWIDTH, matterWidth * 2, {
                 ...wallOptions,
                 label: "wall_left"
             }),
-
             // Right
             Bodies.rectangle(matterWidth, 0, WALLWIDTH, matterWidth * 2, {
                 ...wallOptions,
@@ -154,18 +140,16 @@ const Scene = ({ productData }) => {
             })
         ]);
 
-
-
         // Create a Mouse-Interactive object & add it to the World
-                //sourced from: https://stackoverflow.com/questions/44996124/matter-js-option-to-add-html-to-body
+        //sourced from: https://stackoverflow.com/questions/44996124/matter-js-option-to-add-html-to-body
         render.mouse = Matter.Mouse.create(render.canvas);
         var mouseInteractivity = Matter.MouseConstraint.create(engine, {
-                                mouse: render.mouse,
-                                constraint: {
-                                    stiffness: 0.2,
-                                    render: { visible: false }
-                                }
-                                });
+            mouse: render.mouse,
+            constraint: {
+                stiffness: 0.2,
+                render: { visible: false }
+            }
+        });
 
         Matter.World.add(engine.world, mouseInteractivity);
 
@@ -175,57 +159,29 @@ const Scene = ({ productData }) => {
         var bodies = engine.world.bodies;
         if (!mouseConstraint.bodyB) {
             for (i = 0; i < bodies.length; i++) { 
-            var body = bodies[i];
-            if (Matter.Bounds.contains(body.bounds, mouseConstraint.mouse.position)) {
-                var bodyUrl = body.url;
-                console.log("Body.Url >> " + bodyUrl);
-                // Hyperlinking feature
-                if (bodyUrl != undefined) {
-                window.open(bodyUrl, '_blank');
-                console.log("Hyperlink was opened");
+                var body = bodies[i];
+                if (Matter.Bounds.contains(body.bounds, mouseConstraint.mouse.position)) {
+                    var bodyUrl = body.url;
+                    console.log("Body.Url >> " + bodyUrl);
+                    // Hyperlinking feature
+                    if (bodyUrl != undefined) {
+                        window.open(bodyUrl, '_blank');
+                        console.log("Hyperlink was opened");
+                    }
+                    break;
                 }
-                break;
-            }
             }
         }
         });
 
         //Adding the ball
-        // World.add(world, [ball1]);
         World.add(world, bodies);
-
-
-        //Applying the force to move the ball
-        //Body.applyForce(ball, { x: 0.1, y: 0.1 }, { x: 3.0, y: 3.0 });
-        //Body.applyForce(ball1, { x: 0.1, y: 0.1 }, { x: 3.0, y: 3.0 });
-        //Body.applyForce(body, { x: 0.1, y: 0.1 }, { x: 0.11, y: 0.11 });
-
 
         //Events.on(mouseInteractivity, "mouseup", handleCollision);
         Runner.run(runner, engine);
         Render.run(render);
 
     };
-/*
-    const handleChange = () => {
-        //let isAnimationActive;
-        bodies.forEach(b => {
-            //if isStatic is false, switch it to true to stop animation      
-            if(!(b.isStatic)) {
-                b.isStatic = true;
-                setActive(active)
-                //isAnimationActive = false;
-
-            //if isStatic is true, switch it to false to start animation    
-            } else {
-                b.isStatic = false;
-                setActive(!active)
-                //isAnimationActive = true;
-
-            }
-        })
-    };
-*/
 
     //the use effect that activates the matter.js enviornment
     useEffect(() => {
@@ -236,33 +192,26 @@ const Scene = ({ productData }) => {
 
     return (
         <>
-            <div
-                ref={boxRef}
-                style={{ width: "100vw", height: "100vh" }}
-            >
+            <div ref={boxRef} style={{ width: "100vw", height: "100vh" }}>
                 <canvas ref={canvasRef} />
                 <Products productData={productData} />
+                <button id="stop-button" onClick={(e) => {
+                    bodies.forEach((b) => {
+                        if ((!b.isStatic)) {
+                            b.isStatic = true;    
+                        } else {
+                            b.isStatic = false;     
+                        }
 
-            <button id="stop-button" onClick={() => {
-
-                bodies.forEach((b) => {
-                    if ((!b.isStatic)) {
-                        b.isStatic = true;
-                        //setActive(!active);      
-
-                    } else {
-                        b.isStatic = false;
-                        console.log(active) 
-                        setActive(!active);      
-                       
-                    }
-                    //setActive(!active);      
-
-                })
-            }}>
-                {active? "start" : "stop"}
-            </button>
-
+                        if (b.isStatic) {
+                            e.target.innerHTML = "Start";
+                        } else if (!b.isStatic) {
+                            e.target.innerHTML = "Stop";
+                        }
+                    })
+                }}>
+                    Stop
+                </button>
             </div>
         </>
     )
